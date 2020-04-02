@@ -1,0 +1,17 @@
+---
+- hosts: all
+  vars:
+    python_version: 2.7.12
+    docker_api_version: 1.22
+    app_dir: /var/app/myapps
+    app_name: myapps
+    tmp_dir: /var/tmp/myapps
+    nginx_server_name: www.myapps.com
+    docker_nginx_version: stable
+    sources:
+      - myapps
+      - manage.py
+      - requirements.txt
+
+  roles:
+    - ansible-docker-django

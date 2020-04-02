@@ -1,0 +1,16 @@
+FROM python:{{ python_version }}
+EXPOSE 8000
+
+# Deploy application to docker
+WORKDIR {{ app_dir }}
+
+COPY myapps myapps
+COPY manage.py manage.py
+COPY requirements.txt requirements.txt
+COPY uwsgi.ini uwsgi.ini
+
+RUN pip install -r requirements.txt
+
+COPY start.sh /root/start.sh
+
+CMD sh /root/start.sh

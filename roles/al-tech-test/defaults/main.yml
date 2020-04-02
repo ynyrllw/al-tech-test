@@ -1,0 +1,22 @@
+---
+
+python_version: 3.6.9
+docker_api_version: 19.3.6
+docker_group_members: 
+  - 'vagrant'
+
+software_repo: https://github.com/alamsyahho/sample-django-project.git
+app_dir: /var/app/myapps
+app_name: myapps
+tmp_dir: /var/tmp/myapps
+
+nginx_server_name: al-tech-test
+
+# Version of nginx docker to use. Please refer to https://hub.docker.com/r/library/nginx/tags/
+docker_nginx_version: stable
+
+# List of files and folder to sync to docker container
+sources:
+  - al-tech-test
+  - manage.py
+  - requirements.txt

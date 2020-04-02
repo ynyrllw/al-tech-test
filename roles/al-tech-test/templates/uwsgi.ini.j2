@@ -1,0 +1,16 @@
+[uwsgi]
+base = {{ app_dir }}
+project = {{ app_name }}
+socket = 0.0.0.0:8080
+
+chdir = %(base)
+module = %(base)/%(project)/wsgi:application
+pidfile = %(base)/%(project).pid
+logto = %(base)/uwsgi-%(project).log
+
+wsgi-file = %(project)/wsgi.py
+master = true
+processes = 4
+threads = 2
+max-requests = 5000
+stats = 0.0.0.0:18000

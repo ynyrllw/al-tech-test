@@ -1,0 +1,8 @@
+---
+
+- name: Setup environment to run the sample
+  hosts: all
+  become: yes
+  roles:
+    - role: "angstwad.docker_ubuntu"
+    - role: "al-tech-test"

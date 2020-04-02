@@ -1,0 +1,19 @@
+upstream uwsgi {
+  #default gateway when using Docker
+  server django:8000 weight=1;
+  server django2:8000 weight=1;
+}
+server {
+    listen 80;
+    server_name {{ nginx_server_name }};
+    access_log /var/log/nginx/{{ nginx_server_name }}-access.log;
+    error_log /var/log/nginx/{{ nginx_server_name }}-error.log;
+
+    location / {
+        include uwsgi_params;
+        uwsgi_pass uwsgi;
+        uwsgi_read_timeout 40s;
+        uwsgi_connect_timeout 40s;
+    }
+
+}

@@ -1,0 +1,79 @@
+---
+- include: packages.yml
+
+- name: get local working dir
+  local_action: shell pwd
+  register: local_working_dir
+  changed_when: false
+
+- name: clean up {{ tmp_dir }} before deployment
+  file:
+    name: "{{ tmp_dir }}"
+    state: absent
+  changed_when: false
+
+- name: ensure {{ tmp_dir }} exists
+  file:
+    name: "{{ tmp_dir }}"
+    state: directory
+  changed_when: false
+
+- name: generate all templates
+  template: 
+    src: "{{ item.src }}"
+    dest: "{{ tmp_dir }}/{{ item.dest }}"
+  with_items:
+    - { src: "Dockerfile.j2", dest: "Dockerfile" }
+    - { src: "uwsgi.ini.j2", dest: "uwsgi.ini" }
+    - { src: "start.sh.j2", dest: "start.sh" }
+
+- name: build docker image for django uwsgi web app
+  become: yes
+  docker_image:
+    api_version: "{{ docker_api_version }}"
+    build:
+      path: "{{ tmp_dir }}"
+    name: "{{ app_name }}"
+    push: false
+    state: present
+
+- name: ensure nginx conf.d directory exists
+  file:
+    name: "/etc/nginx/conf.d"
+    state: directory
+
+- name: create nginx config for {{ app_name }}
+  template:
+    src: nginx.conf.j2
+    dest: "/etc/nginx/conf.d/{{ app_name }}.conf"
+
+- name: run docker container for django uwsgi web app
+  docker_container:
+    api_version: "{{ docker_api_version }}"
+    name: "django"
+    image: "{{ app_name }}:{{ version.stdout }}"
+    state: started
+
+- name: run docker container for django uwsgi web app 2
+  docker_container:
+    api_version: "{{ docker_api_version }}"
+    name: "django2"
+    image: "{{ app_name }}:{{ version.stdout }}"
+    state: started
+
+- name: run docker container for nginx
+  docker_container:
+    api_version: "{{ docker_api_version }}"
+    name: nginx
+    image: nginx:{{ docker_nginx_version }}
+    recreate: true
+    state: started
+    ports:
+      - "80:80"
+      - "443:443"
+    links:
+            - "django:django"
+            - "django2:django2"
+    volumes:
+      - "/etc/nginx/conf.d/{{ app_name }}.conf:/etc/nginx/conf.d/{{ app_name }}.conf"
+  changed_when: false
