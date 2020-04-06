@@ -21,6 +21,18 @@ cd al-tech-test
 
 vagrant up
 
+#File Structure
+
+The Django web server exists on a different repo but is a sub module in this master repository. All template files are in this repo as they need to be dynamically set by ansible first.
+
+- Provisioning contains the ansible galaxy role dependencies to be installed
+- Vagrantfile will create the control machine and ensure all ansible dependencies are installed
+- ansible.cfg - Ensures we're using python3 and allows roles to work properly. (without roles set it will break
+- roles - The meat will be in here - specficially in tasks/main.yml and in templates/
+- roles/templates - all files required for ansible include the git sub module for the django web server
+- roles/tasks/main.yml - All the commands that will build the django docker image and create the docker container
+
+
 #Thoughts
 I made this far more challenging for myself than I needed to and I'm not happy with myself about it. Although it was an interesting challenge then just asking someone what dev ops means and got to try some new things.
 
