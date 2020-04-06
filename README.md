@@ -21,6 +21,8 @@ cd al-tech-test
 
 vagrant up
 
+In your browser go to 127.0.0.1:8080 (not on the vagrant VM, the port is 80 on the VM)
+
 #File Structure
 
 The Django web server exists on a different repo but is a sub module in this master repository. All template files are in this repo as they need to be dynamically set by ansible first.
@@ -65,6 +67,7 @@ There are alot of resources arguing both ways that you should use ansible to bui
 * polish the ansible playbook
 * extra VM for docker, and one for control machine
 * stick to version in requirements.txt for the web server (currently pulling latest)
+* allow easy config of ports
 
 #Issues
 Adding docker always adds an extra layer of complexity, but the main trouble I had was connecting the web servers with nginx which was in another container, one issue I didn't find out for awhile was the container was publishing to the localhost of the container itself, so nginx couldnt't access it.
