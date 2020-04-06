@@ -1,14 +1,13 @@
 ---
 
 python_version: 3.6.9
-docker_api_version: 19.3.6
+docker_api_version: '1.40'
 docker_group_members: 
   - 'vagrant'
 
-software_repo: https://github.com/alamsyahho/sample-django-project.git
-app_dir: /var/app/myapps
-app_name: myapps
-tmp_dir: /var/tmp/myapps
+app_dir: /var/tmp/al_proj
+app_name: al_proj
+tmp_dir: /var/tmp/al_proj
 
 nginx_server_name: al-tech-test
 

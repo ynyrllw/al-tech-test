@@ -4,7 +4,8 @@ EXPOSE 8000
 # Deploy application to docker
 WORKDIR {{ app_dir }}
 
-COPY myapps myapps
+COPY al_proj al_proj
+COPY al_hello al_hello
 COPY manage.py manage.py
 COPY requirements.txt requirements.txt
 COPY uwsgi.ini uwsgi.ini

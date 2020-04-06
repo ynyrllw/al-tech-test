@@ -10,6 +10,7 @@ VM_USER = 'vagrant'# Username
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #config.vm.provider "docker"
   config.vm.provider "virtualbox"
+  config.vm.network "forwarded_port", guest: 80, host: 8080
   config.vm.box = VAGRANT_BOX
   
   #config.vbguest.auto_update = true
@@ -26,8 +27,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
          #DHCP — commert this out if planning on using NAT instead
   #config.vm.network "private_network", type: "dhcp"  # # Port forwarding — uncomment this to use NAT instead of DHCP
   # config.vm.network "forwarded_port", guest: 80, host: VM_PORT  # Sync folder
-  config.vm.provision "ansible" do |ansible|
-    ansible.playbook = "playbooks/al-playbook.yml"
+  config.vm.provision "ansible_local" do |ansible|
+    ansible.config_file = "/vagrant/ansible.cfg"
     ansible.extra_vars = { ansible_python_interpreter:"/usr/bin/python3" }
+    ansible.galaxy_role_file = "provisioning/requirements.yml"
+    ansible.galaxy_command = "ansible-galaxy install --role-file=%{role_file}"
+    ansible.playbook = "playbooks/al-playbook.yml"
   end
 end

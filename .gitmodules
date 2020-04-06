@@ -1,0 +1,3 @@
+[submodule "roles/al-tech-test/templates/al_proj"]
+	path = roles/al-tech-test/templates/al_proj
+	url = https://github.com/ynyrllw/al-python-web-app.git

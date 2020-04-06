@@ -26,6 +26,18 @@
     - { src: "Dockerfile.j2", dest: "Dockerfile" }
     - { src: "uwsgi.ini.j2", dest: "uwsgi.ini" }
     - { src: "start.sh.j2", dest: "start.sh" }
+      
+- name: copy python app reuquirements and manage.py
+  template: 
+    src: "{{ item }}"
+    dest: "{{ tmp_dir }}"
+  with_fileglob:
+    - "../templates/al-python-web-app/*"
+
+- name: copy python app
+  copy: 
+    src: "/vagrant/roles/al-tech-test/templates/al_proj/"
+    dest: "{{ tmp_dir}}"
 
 - name: build docker image for django uwsgi web app
   become: yes
@@ -51,15 +63,19 @@
   docker_container:
     api_version: "{{ docker_api_version }}"
     name: "django"
-    image: "{{ app_name }}:{{ version.stdout }}"
+    image: "{{ app_name }}"
     state: started
+    ports:
+      - "8000:8000"
 
 - name: run docker container for django uwsgi web app 2
   docker_container:
     api_version: "{{ docker_api_version }}"
     name: "django2"
-    image: "{{ app_name }}:{{ version.stdout }}"
+    image: "{{ app_name }}"
     state: started
+    ports:
+      - "8001:8000"
 
 - name: run docker container for nginx
   docker_container:
@@ -68,12 +84,38 @@
     image: nginx:{{ docker_nginx_version }}
     recreate: true
     state: started
+    #use journald instead of docker logs in future
+    log_driver: journald
+    log_options:
     ports:
       - "80:80"
       - "443:443"
     links:
-            - "django:django"
-            - "django2:django2"
+      - "django"
+      - "django2"
     volumes:
       - "/etc/nginx/conf.d/{{ app_name }}.conf:/etc/nginx/conf.d/{{ app_name }}.conf"
   changed_when: false
+
+- name: first GET request to nginx
+  uri:
+    url: http://127.0.0.1:80
+
+- name: second GET request to nginx
+  uri:
+    url: http://127.0.0.1:80
+    return_content: yes
+  register: this
+  failed_when: "'Hello World' not in this.content"
+
+- name: docker logs nginx
+  command: docker logs nginx
+  register: docker_logs
+  become: yes
+
+- fail:
+    msg: 'checking for {{ item }} in standard output'
+  when: item not in docker_logs.stdout
+  with_items:
+    - '172.17.0.3'
+    - '72.17.0.2'

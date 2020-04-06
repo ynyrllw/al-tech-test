@@ -1,19 +1,20 @@
-upstream uwsgi {
-  #default gateway when using Docker
-  server django:8000 weight=1;
-  server django2:8000 weight=1;
+upstream al-test {
+  server django2:8000;
+  server django:8000;
 }
+log_format upstream_time '$upstream_addr - $upstream_http_server - $remote_user [$time_local] '
+                             '"$request" $status $body_bytes_sent '
+                             '"$http_referer" "$http_user_agent"'
+                             'rt=$request_time uct="$upstream_connect_time" uht="$upstream_header_time" urt="$upstream_response_time"';
 server {
     listen 80;
-    server_name {{ nginx_server_name }};
-    access_log /var/log/nginx/{{ nginx_server_name }}-access.log;
-    error_log /var/log/nginx/{{ nginx_server_name }}-error.log;
+    server_name al-tech-test;
+    access_log /var/log/nginx/al-tech-test-access.log;
+    error_log /var/log/nginx/al-tech-test-error.log;
+    access_log /var/log/nginx/access.log upstream_time;
 
     location / {
+        uwsgi_pass al-test;
         include uwsgi_params;
-        uwsgi_pass uwsgi;
-        uwsgi_read_timeout 40s;
-        uwsgi_connect_timeout 40s;
     }
-
 }
