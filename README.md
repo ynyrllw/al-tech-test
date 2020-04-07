@@ -1,4 +1,4 @@
-#AL Tech Test Ynyr Submission
+# AL Tech Test Ynyr Submission
 
 This is the technical test for job application at al.
 
@@ -8,22 +8,24 @@ This should work with both windows and linux operating systems
 
 Time spent: well over 24h
 
-#Software dependencies
+# Software dependencies
 See below for software versions used
 * Vagrant
 * Virtual Box
 
-#Instructions 
+# Instructions 
+Once all dependencies are installed, Copying down the git repo
+`git clone <url>`l
+change directory into the repository so we're in the same location as the vagrantfile
+`cd al-tech-test
+will default to bringing up the box with the vagrant file in the current working directory
+`vagrant up`
+Make a GET Request and ensure you get hello world. If you're ona linux terminal use the commands below.
+`wget 127.0.0.1:8080`
 
-git clone 
+On windows: In your browser go to 127.0.0.1:8080 (not on the vagrant VM, the port is 80 on the VM)
 
-cd al-tech-test
-
-vagrant up
-
-In your browser go to 127.0.0.1:8080 (not on the vagrant VM, the port is 80 on the VM)
-
-#File Structure
+# File Structure
 
 The Django web server exists on a different repo but is a sub module in this master repository. All template files are in this repo as they need to be dynamically set by ansible first.
 
@@ -35,12 +37,12 @@ The Django web server exists on a different repo but is a sub module in this mas
 - roles/tasks/main.yml - All the commands that will build the django docker image and create the docker container
 
 
-#Thoughts
+# Thoughts
 I made this far more challenging for myself than I needed to and I'm not happy with myself about it. Although it was an interesting challenge then just asking someone what dev ops means and got to try some new things.
 
 I think I definitely tried to rush which ended up taking more time in de-bugging in the end, especially with all the different tools in the mix it was bound to not work to begin with. Usually I would have iteratively added a new tool on an exiisting stack and I'd have it in a known state.
 
-#Tweaks
+# Tweaks
 From reading the brief it seemed slightly out of date, no containerisation as an example. Main change is using a control machine VM for ansible and then containers instead of a web server or load balancer VM.
 
 In hindsight this would have been finished far sooner if I hadn't made this decision.
@@ -51,7 +53,7 @@ There are alot of resources arguing both ways that you should use ansible to bui
 
 
 
-#Improvements
+# Improvements
 * Add tests in its own yml file.
 * much more testing - test suite
 * stop using docker logs for the testing, syslog or journald
@@ -69,7 +71,7 @@ There are alot of resources arguing both ways that you should use ansible to bui
 * stick to version in requirements.txt for the web server (currently pulling latest)
 * allow easy config of ports
 
-#Issues
+# Issues
 Adding docker always adds an extra layer of complexity, but the main trouble I had was connecting the web servers with nginx which was in another container, one issue I didn't find out for awhile was the container was publishing to the localhost of the container itself, so nginx couldnt't access it.
 
 Not exactly an issue but deciding where ansible fit, if I either used it inside a container or used it to create them.
@@ -81,9 +83,9 @@ Something that unfortunately I sunk a bit of time the partition on my fedora OS 
 Decided it wasn't worth the hassle and moved to windows and use ansible_local with a control machine. Plus for this now people can run this on both windows and linux.
 
 
-#Software design choices
-##Web Server
-###Python
+# Software design choices
+## Web Server
+### Python
 
 Decided early on to use Python as it's what I've used and quite comfortable with. Now I would probably chosen something much simpler like node js. Had experience with tomcat but felt it was too heavy for what we were doing. 
 
@@ -94,21 +96,21 @@ UWSGI is the standard usually to use for python web servers
 * Docker
 
 
-##Configuration Management
+## Configuration Management
 2 configuration management tools I was between was puppet and ansible. The master slave architecture really would  not have fitted with what I was aiming for, so ansible was naturally the fit as its a serverless architecture which doesn't require much dependencies except python(which I've already stuck to) and openssh + it's what I've been using the most recently.
 
 Usually puppet is more powerful but for what I wanted the CM to do which was prep the host and deploy the containers, there wa senough support in ansible.
 
 Didn't consider others such as Chef as I though best stick with what I know but if it was a simpler solution would have been good to try and see if it fit the use case.
 
-#Loadbalancer
+# Loadbalancer
 Didn't think this too much. Nginx is basically a standard that most people use, I've had experience with it before and it has strong compatbility with UWSGI.
 
-#Software Versions
+# Software Versions
 Vagrant 2.2.7
 Vrtual box 6.1.4
 
-#Long Form
+# Long Form
 Warning: this was my thought process while working so it's quite long and convoluted but wrote it as I went. I've tidied it slightly and made it more comprehensible but tried to keep it mostly intact. Treat it as a work log or a comment on a JIRA ticket.
 
 
